@@ -1,0 +1,64 @@
+# Adding Tags as parameters
+Parameters:
+  InstanceTags:
+    Description: Tags for the EC2 instance
+    Type: CommaDelimitedList
+    Default: "Demo,Ec2Instance"
+
+# Example on how to use Mappings
+Mappings:
+  RegionMap: 
+    us-east-1:
+      "region": "us-east-1"
+    us-west-1:
+      "region": "us-west-1"
+    eu-west-1:
+      "region": "eu-west-1"
+    eu-west-2:
+      "region": "eu-west-2"
+
+  
+Resources:
+  DemoInstance:
+    Type: AWS::EC2::Instance
+
+    Properties:
+      AvailabilityZone: eu-west-2a
+      ImageId: ami-0dd555eb7eb3b7c82
+      InstanceType: t2.micro
+
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+        - !Ref ServerSecurityGroup
+
+      Tags: 
+        - Key: "Project"
+          Value: !Select [ 0, !Ref InstanceTags ]
+        - Key: "Type"
+          Value: !Select [ 1, !Ref InstanceTags ]
+        - Key: "Region"
+          Value: !FindInMap [ RegionMap, !Ref "AWS::Region", region ]
+
+
+# Creating securitie groups for the Instance
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+
+    Properties: 
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress: 
+      - CidrIp: 0.0.0.0/0
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+
+    Properties: 
+      GroupDescription: Allow connections from specific CIDR ranges
+      SecurityGroupIngress: 
+      - CidrIp: 0.0.0.0/0
+        FromPort: 80
+        IpProtocol: tcp
+        ToPort: 80
