@@ -29,8 +29,8 @@ aws cloudformation delete-stack --stack-name DemoEc2Stack --profile <PROFILE>
 ## Potential errors
 --------------------------------
 
-- **An error occurred (ValidationError) when calling the CreateChangeSet operation: Stack is in ROLLBACK_COMPLETE state and can not be updated.**
+ **An error occurred (ValidationError) when calling the CreateChangeSet operation: Stack is in ROLLBACK_COMPLETE state and can not be updated.**
 
-```
+
 This happens when stack creation fails. By default the stack will remain in place with a status of ROLLBACK_COMPLETE. This means it's successfully rolled back (deleted) all the resources which the stack had created. The only thing remaining is the empty stack itself. You cannot update this stack; you must manually delete it, after which you can attempt to deploy it again.
-```
+
